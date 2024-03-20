@@ -2,9 +2,9 @@
   "name": "clapi-bb",
   "version": "1.0.6",
   "description": "CLI app to build the boiler plate API routes & SQL schema for REST APIs build in the express framework.",
-  "main": "./bin/clapi-bb.js",
+  "main": "dist/src/clapi-bb.js",
   "bin": {
-    "clapi": "./bin/clapi-bb.js"
+    "clapi": "dist/src/clapi-bb.js"
   },
   "scripts": {
     "build": "tsc",
@@ -37,6 +37,7 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
+    "clapi-bb": "^1.0.6",
     "dotenv": "^16.4.5"
   }
 }
