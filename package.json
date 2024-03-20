@@ -1,8 +1,11 @@
 {
-  "name": "clapi",
+  "name": "clapi-bb",
   "version": "1.0.0",
   "description": "CLI app to build the boiler plate API routes & SQL schema for REST APIs build in the express framework.",
   "main": "dist/clapi.js",
+  "bin": {
+    "clapi": "dist/src/Clapi.js"
+  },
   "scripts": {
     "build": "tsc",
     "cleanup": "npm run rm-build && npm run rm-coverage && npm run rm-routes",
@@ -14,7 +17,7 @@
     "clapi": "node dist/src/Clapi.js"
   },
   "author": "Brion Ballard",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
