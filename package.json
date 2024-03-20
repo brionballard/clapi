@@ -4,7 +4,7 @@
   "description": "CLI app to build the boiler plate API routes & SQL schema for REST APIs build in the express framework.",
   "main": "dist/clapi.js",
   "bin": {
-    "clapi": "dist/src/Clapi.js"
+    "clapi": "./dist/src/Clapi.js"
   },
   "scripts": {
     "build": "tsc",
