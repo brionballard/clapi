@@ -1,6 +1,6 @@
 {
   "name": "clapi-bb",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CLI app to build the boiler plate API routes & SQL schema for REST APIs build in the express framework.",
   "main": "dist/src/Clapi.js",
   "bin": {
