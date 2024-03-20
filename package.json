@@ -37,6 +37,7 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
+    "clapi-bb": "^1.0.2",
     "dotenv": "^16.4.5"
   }
 }
