@@ -30,7 +30,7 @@ Commands are comprised of two things:
 
 ## Clapi
 
-When you initialize Clapi with the command `npm run clapi`  the code follows this structure:
+When you initialize Clapi with the command `clapi` the code follows this structure:
 
 1. Load all of the commands from the command directory
     1. Load all of the validators and assign them to their respectively named Commands
@@ -47,9 +47,9 @@ All of the requirements should be controlled by the Validator, presented by Clap
 
 Clapi should be installed as a dev dependency in your project and only used to scaffold components of your project such as starting a new microservice or just creating a single file.
 
-`npm i clapi --save-dev`
+`npm i clapi-bb --save-dev`
 
-`npm run clapi`
+`clapi`
 
 ## Available Commands
 
