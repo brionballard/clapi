@@ -28,7 +28,7 @@ const requiredOptionsMessage: string = `The following arguments are required: `;
  * @return {Command[]}
  */
 function loadCommands (dirPath: string, ext?: string): Command[] {
-    ext = ext ?? '.js'
+    const extension = ext ?? '.js'
     if (existsSync(dirPath)) {
         const rawPaths: string[] = readdirSync(dirPath);
         return rawPaths
@@ -38,7 +38,7 @@ function loadCommands (dirPath: string, ext?: string): Command[] {
                     try {
                         const imported = require(commandPath);
                         const func = imported.default;
-                        const name: string = file.replace(ext, '');
+                        const name: string = file.replace(extension, '');
 
                         const validator = imported?.Validator ?? searchForValidatorByConvention({commandName: name, ext});
 
@@ -210,22 +210,22 @@ function askForArg (command: Command, rl: readline.Interface, option?: string, o
 
     const required: string[] = command.validator.required;
     let newOptions: string[] = options ?? [...command.validator.available];
-    option = option ?? newOptions[0];
+    const currentOption = option ?? newOptions[0];
 
-    const existsInAnswers = (ans: string) => ans.startsWith(option);
+    const existsInAnswers = (ans: string) => ans.startsWith(currentOption);
 
     return new Promise<void>((resolve, reject) => {
-        rl.question(askForOptionMessage.replace('{option}', option), (answer: string) => {
+        rl.question(askForOptionMessage.replace('{option}', currentOption), (answer: string) => {
             if (answer && answer !== '') {
-                process.argv.push(`${option}=${answer}`);
+                process.argv.push(`${currentOption}=${answer}`);
             } else {
-                if (required.includes(option) && !process.argv.some(existsInAnswers)) {
-                    logError(`${option} is required.`);
-                    askForArg(command, rl, option).then(() => resolve());
+                if (required.includes(currentOption) && !process.argv.some(existsInAnswers)) {
+                    logError(`${currentOption} is required.`);
+                    askForArg(command, rl, currentOption).then(() => resolve());
                 }
             }
 
-            newOptions = newOptions.filter((op) => op !== option);
+            newOptions = newOptions.filter((op) => op !== currentOption);
             if(newOptions.length > 0) {
                 askForArg(command, rl, newOptions[0], newOptions).then(() => resolve());
             } else {

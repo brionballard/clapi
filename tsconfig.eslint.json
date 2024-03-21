@@ -1,5 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules",
-    "src/lib/tests/xlsx.ts", "src/test-data"]
+  "exclude": ["node_modules"]
 }

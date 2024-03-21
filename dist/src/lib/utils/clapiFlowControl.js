@@ -34,7 +34,7 @@ exports.requiredOptionsMessage = requiredOptionsMessage;
  * @return {Command[]}
  */
 function loadCommands(dirPath, ext) {
-    ext = ext ?? '.js';
+    const extension = ext ?? '.js';
     if ((0, fs_1.existsSync)(dirPath)) {
         const rawPaths = (0, fs_1.readdirSync)(dirPath);
         return rawPaths
@@ -44,7 +44,7 @@ function loadCommands(dirPath, ext) {
                 try {
                     const imported = require(commandPath);
                     const func = imported.default;
-                    const name = file.replace(ext, '');
+                    const name = file.replace(extension, '');
                     const validator = imported?.Validator ?? searchForValidatorByConvention({ commandName: name, ext });
                     if (validator === undefined) {
                         throw new Error(`No validator found for ${name} command, excluding from Commands selection.`);
@@ -207,20 +207,20 @@ function askForArg(command, rl, option, options) {
         process.exit(1); // TODO: handle this error better
     const required = command.validator.required;
     let newOptions = options ?? [...command.validator.available];
-    option = option ?? newOptions[0];
-    const existsInAnswers = (ans) => ans.startsWith(option);
+    const currentOption = option ?? newOptions[0];
+    const existsInAnswers = (ans) => ans.startsWith(currentOption);
     return new Promise((resolve, reject) => {
-        rl.question(askForOptionMessage.replace('{option}', option), (answer) => {
+        rl.question(askForOptionMessage.replace('{option}', currentOption), (answer) => {
             if (answer && answer !== '') {
-                process.argv.push(`${option}=${answer}`);
+                process.argv.push(`${currentOption}=${answer}`);
             }
             else {
-                if (required.includes(option) && !process.argv.some(existsInAnswers)) {
-                    (0, logger_1.logError)(`${option} is required.`);
-                    askForArg(command, rl, option).then(() => resolve());
+                if (required.includes(currentOption) && !process.argv.some(existsInAnswers)) {
+                    (0, logger_1.logError)(`${currentOption} is required.`);
+                    askForArg(command, rl, currentOption).then(() => resolve());
                 }
             }
-            newOptions = newOptions.filter((op) => op !== option);
+            newOptions = newOptions.filter((op) => op !== currentOption);
             if (newOptions.length > 0) {
                 askForArg(command, rl, newOptions[0], newOptions).then(() => resolve());
             }
