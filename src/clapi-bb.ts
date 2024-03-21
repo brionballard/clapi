@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 import path from "path";
 import * as readline from "readline";
 import {Command} from "./lib/types";
