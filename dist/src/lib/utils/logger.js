@@ -30,7 +30,7 @@ var LoggerColors;
     LoggerColors["BgCyan"] = "\u001B[46m";
     LoggerColors["BgWhite"] = "\u001B[47m";
     LoggerColors["BgGray"] = "\u001B[100m";
-})(LoggerColors = exports.LoggerColors || (exports.LoggerColors = {}));
+})(LoggerColors || (exports.LoggerColors = LoggerColors = {}));
 const ErrorMsgs = {
     InvalidKeyword: () => 'InvalidCommand: Missing keyword \'clapi:\'',
     MaxArgumentExceeded: (commandName, expected) => `MaxArgumentExceeded: Max args for the ${commandName} command is ${expected}`,
