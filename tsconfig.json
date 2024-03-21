@@ -9,5 +9,5 @@
     "declaration": true
   },
   "include": ["src/**/**/*.ts"],
-  "exclude": ["node_modules", "src/lib/tests"]
+  "exclude": ["node_modules", "src/lib/tests", ".idea"]
 }
