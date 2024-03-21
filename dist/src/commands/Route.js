@@ -106,7 +106,7 @@ exports.getRouteFileContents = getRouteFileContents;
 function injectTypesToContents(contents) {
     // Define type imports
     const expressTypes = `import { type Router, type Request, type Response, type NextFunction } from "express";`;
-    const customTypes = `import { type RouteFunction, type RouteOptions } from "../lib/types";`;
+    const customTypes = `import { type RouteFunction, type RouteOptions } from ""clapi-bb/dist/types"";`;
     // Define split point and replacement
     const splitContentsAt = ' = (router)';
     const replacementArg = 'options: RouteOptions';
