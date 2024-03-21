@@ -5,6 +5,7 @@
   "bin": {
     "clapi": "dist/src/clapi-bb.js"
   },
+  "types": "dist/types.dt",
   "scripts": {
     "build": "tsc",
     "cleanup": "npm run rm-build && npm run rm-coverage && npm run rm-routes && npm run rm-clapi",
