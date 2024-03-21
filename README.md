@@ -55,3 +55,4 @@ Clapi should be installed as a dev dependency in your project and only used to s
 
 - Route
     - Generate a route file
+    - Arguments: name, path, includeTypes
