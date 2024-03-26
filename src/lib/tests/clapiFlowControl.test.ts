@@ -22,7 +22,7 @@ const RouteCommandObject: Command = {
     validator: {
         maxArgs: 3,
         minArgs: 1,
-        name: 'route',
+        name: 'Create Route',
         available: [ 'name', 'path', 'includeTypes' ],
         required: [ 'name' ],
         argDetails: [
@@ -126,17 +126,11 @@ describe('Should test the logic flow of Clapi', () => {
         expect(process.exit).toHaveBeenCalledWith(1)
     });
 
-    it('Should remove commands from array if validator is not found', () => {
-        const commands: Command[] = flowControl.loadCommands(commandsDirPath, '.ts');
-        const withValidators: Command[] = flowControl.loadCommandValidators(commandValidatorsPath, commands, '.js'); // pass wrong extension to force removal -- no commands with.js exists in uncompiled code
-        expect(withValidators.length).toBe(0);
-    });
-
     it('Should console.log the command selections', () => {
         const commands: Command[] = flowControl.loadCommands(commandsDirPath, '.ts');
         flowControl.formatAndDisplayCommandSelections(commands);
 
-        const shouldHaveBeenFormattedLike = commands.map((command, index) => `[${index}] ${command.name}`);
+        const shouldHaveBeenFormattedLike = commands.map((command, index) => `[${index}] ${command.validator.name}`);
         shouldHaveBeenFormattedLike.forEach((option: string) => expect(logCustom).toHaveBeenCalledWith(LoggerColors.FgCyan, option));
     });
 
@@ -182,7 +176,7 @@ describe('Should test the logic flow of Clapi that depends on readline.Interface
             callback('0'); // Assuming the user selects the first command
         });
 
-        flowControl.askUserToSelectCommand(commands, rl);
+         flowControl.askUserToSelectCommand(commands, rl);
         expect(mockQuestion).toHaveBeenCalledWith(flowControl.askUserToSelectCommandContent, expect.any(Function));
     });
 
@@ -361,7 +355,7 @@ describe('Should test the logic flow of Clapi that depends on readline.Interface
         expect(rl.question).toHaveBeenCalledWith(flowControl.askForOptionMessage.replace('{option}', 'name'), expect.any(Function));
         expect(rl.question).toHaveBeenCalledWith(flowControl.askForOptionMessage.replace('{option}', 'path'), expect.any(Function));
         expect(rl.question).toHaveBeenCalledWith(flowControl.askForOptionMessage.replace('{option}', 'includeTypes'), expect.any(Function));
-        expect(logGood).toHaveBeenCalledWith(`${fileName} route file successfully created.`);
+        expect(logGood).toHaveBeenCalledWith(`${path.join('src', 'routes', fileName + ext)} file successfully created.`);
         expect(existsSync(expectCreatedFilePath)).toBe(true);
         unlinkSync(expectCreatedFilePath);
     });

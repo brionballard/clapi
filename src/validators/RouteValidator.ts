@@ -1,4 +1,5 @@
 import {type ValidatorOptions, type ArgDetail} from "../lib/types";
+import {ClapiMeta} from "../lib/utils/defaults";
 
 const description: string = 'The route command generates the boiler plate code for a API routes file. It will include the methods: GET(one), GET(many), POST, PUT, DELETE.'
 const nameType: ArgDetail = {
@@ -24,11 +25,17 @@ const argDetails: ArgDetail[] = [nameType, includeTypes, pathDetails];
 const RouteValidator: ValidatorOptions = {
     maxArgs: 3,
     minArgs: 1,
-    name: 'route',
+    name: 'Create Route',
     available: ['name', 'path', 'includeTypes'],
     required: ['name'],
     argDetails,
     description,
+}
+
+export interface RouteValidatorArgs extends ClapiMeta {
+    name: string
+    path: string
+    // Will inherit two properties: lang & includeTypes
 }
 
 export default RouteValidator;

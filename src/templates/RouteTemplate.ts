@@ -5,7 +5,7 @@ export const RouteTemplate = `
 export const {name} = (router) => {
     router.get('/', async (req, res, next) => {
         try {
-            // Get Many
+            // Get Many {name}
         } catch (error) {
             next(error)
         }
@@ -13,7 +13,7 @@ export const {name} = (router) => {
     
     router.get('/:id', async (req, res, next) => {
         try {
-         // Get One
+         // Get One {name}
         } catch (error) {
             next(error)
         }
@@ -21,7 +21,7 @@ export const {name} = (router) => {
     
     router.post('/', async (req, res, next) => {
         try {
-         // Create One
+         // Create One {name}
         } catch (error) {
             next(error)
         }
@@ -29,7 +29,7 @@ export const {name} = (router) => {
     
     router.put('/:id', async (req, res, next) => {
         try {
-         // Update One
+         // Update One {name}
         } catch (error) {
             next(error)
         }
@@ -37,7 +37,7 @@ export const {name} = (router) => {
     
     router.patch('/:id', async (req, res, next) => {
         try {
-         // Update partial
+         // Update partial {name}
         } catch (error) {
             next(error)
         }
@@ -45,7 +45,7 @@ export const {name} = (router) => {
     
     router.delete('/:id', async (req, res, next) => {
         try {
-         // Destroy One
+         // Destroy One {name}
         } catch (error) {
             next(error)
         }
@@ -55,3 +55,61 @@ export const {name} = (router) => {
 };`
 
 
+export const TSRouteTemplate = `import { type Router, type Request, type Response, type NextFunction } from "express";
+import { type RouteFunction, type RouteOptions } from "clapi-bb/dist/types";
+
+
+/**
+ * Defines {name} based API routes.
+ */
+export const {name}: RouteFunction = (router: Router): Router => {
+    router.get('/', async (options: RouteOptions) => {
+        try {
+            // Get Many {name}
+        } catch (error) {
+            options.next(error)
+        }
+    });
+    
+    router.get('/:id', async (options: RouteOptions) => {
+        try {
+         // Get One {name}
+        } catch (error) {
+            options.next(error)
+        }
+    });
+    
+    router.post('/', async (options: RouteOptions) => {
+        try {
+         // Create One {name}
+        } catch (error) {
+            options.next(error)
+        }
+    });
+    
+    router.put('/:id', async (options: RouteOptions) => {
+        try {
+         // Update One {name}
+        } catch (error) {
+            options.next(error)
+        }
+    });
+    
+    router.patch('/:id', async (options: RouteOptions) => {
+        try {
+         // Update partial {name}
+        } catch (error) {
+            options.next(error)
+        }
+    });
+    
+    router.delete('/:id', async (options: RouteOptions) => {
+        try {
+         // Destroy One {name}
+        } catch (error) {
+            options.next(error)
+        }
+    });
+        
+    return router;
+};`

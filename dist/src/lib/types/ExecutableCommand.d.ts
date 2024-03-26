@@ -7,4 +7,4 @@ export type Command = {
     func: ExecutableCommand;
     validator: ValidatorOptions;
 };
-export type ExecutableCommand = (args: ParsedArgs, rl: readline.Interface) => void;
+export type ExecutableCommand = (args: ParsedArgs<any>, rl: readline.Interface) => void;

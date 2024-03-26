@@ -5,7 +5,7 @@ const logger_1 = require("./logger");
 /**
  * Gets the user input arguments.
  * @param {ValidatorOptions} validatorOptions
- * @returns {ParsedArgs} The user input arguments as an object
+ * @returns {ParsedArgs<any>} The user input arguments as an object
  */
 function getArgs(validatorOptions) {
     const raw = getSlicedRawArgs();
@@ -40,7 +40,7 @@ exports.validateNpmLifeCycleAndReturnLifeCycleString = validateNpmLifeCycleAndRe
  * Parse array of args to an object.
  * @param {string[]} args
  * @param {ValidatorOptions} validator
- * @return {ParsedArgs}
+ * @return {ParsedArgs<any>}
  */
 function parseArgsArrayToObject(args, validator) {
     const options = {};
@@ -76,7 +76,7 @@ function parseArgumentValue(value, treatedAs) {
 }
 /**
  * Validates the given arguments for the command or log an error and exit the process
- * @param {ParsedArgs} args
+ * @param {ParsedArgs<any>} args
  * @param {ValidatorOptions} options
  */
 function validateArguments(args, options) {

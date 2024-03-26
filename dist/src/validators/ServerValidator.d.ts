@@ -1,9 +1,8 @@
 import { ValidatorOptions } from "../lib/types";
+import { ClapiMeta } from "../lib/utils/defaults";
 declare const ServerValidator: ValidatorOptions;
-export type ServerCommandParsedArgs = {
+export interface ServerCommandParsedArgs extends ClapiMeta {
     path?: string;
-    includeErrorHandling?: boolean;
-    includeTypes?: boolean;
     defaultPort?: number;
-};
+}
 export default ServerValidator;

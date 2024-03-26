@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { Command, ValidatorOptions } from "../types";
+import { Command, ParsedArgs, ValidatorOptions } from "../types";
 import * as readline from "readline";
 declare const askUserToSelectCommandContent: string;
 declare const askUserToConfirmSelectionContent: string;
@@ -41,7 +41,7 @@ type ValidatorSearchOptions = {
  */
 declare function searchForValidatorByConvention(options: ValidatorSearchOptions): ValidatorOptions;
 /**
- * Format command names as display options and render in terminal
+ * Format command names(from validator) as display options and render in terminal
  * @param {Command[]} commands
  */
 declare function formatAndDisplayCommandSelections(commands: Command[]): void;
@@ -80,4 +80,26 @@ declare function askForArg(command: Command, rl: readline.Interface, option?: st
  * @param {readline.Interface} rl
  */
 declare function handleArgsAndExecute(command: Command, rl: readline.Interface): void;
-export { loadCommands, loadCommandValidators, formatAndDisplayCommandSelections, askUserToSelectCommand, confirmSelection, displayAvailableArgumentsAndDetails, askForArg, handleArgsAndExecute, searchForValidatorByConvention, askUserToSelectCommandContent, askUserToConfirmSelectionContent, availableCommandsMessage, askForOptionMessage, availableOptionsMessage, argumentDetailDescription, requiredOptionsMessage };
+/**
+ * Handle the case when a file with the same name already exists.
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {string} filePath - Path to the existing file.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @return {Promise<void>}
+ */
+declare function handleDuplicateFileConflict(args: ParsedArgs<any>, filePath: string, rl: readline.Interface): Promise<ParsedArgs<any>>;
+/**
+ * Prompt user to rename the file and try again.
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @returns {Promise<void>}
+ */
+declare function renameFileAndTryAgain(args: ParsedArgs<any>, rl: readline.Interface): Promise<ParsedArgs<any>>;
+/**
+ * Ask for name of file when renaming
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @return {Promise<void>}
+ */
+declare function askForName(args: ParsedArgs<any>, rl: readline.Interface): Promise<ParsedArgs<any>>;
+export { loadCommands, loadCommandValidators, formatAndDisplayCommandSelections, askUserToSelectCommand, confirmSelection, displayAvailableArgumentsAndDetails, askForArg, handleArgsAndExecute, searchForValidatorByConvention, handleDuplicateFileConflict, renameFileAndTryAgain, askForName, askUserToSelectCommandContent, askUserToConfirmSelectionContent, availableCommandsMessage, askForOptionMessage, availableOptionsMessage, argumentDetailDescription, requiredOptionsMessage };

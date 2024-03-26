@@ -11,13 +11,31 @@ import {
 
 import * as logger from '../utils/logger';
 import {ErrorMsgs, logError} from "../utils/logger";
+import {ValidatorOptions} from "../types";
 
-const validationOptions = {
+const validationOptions: ValidatorOptions = {
    maxArgs: 3,
    minArgs: 2,
    name: 'route',
    available: ['name', 'type', 'action'],
-   required: ['name', 'type']
+   required: ['name', 'type'],
+   argDetails: [
+      {
+         name: 'name',
+         treatedAs: 'string',
+         description: ""
+      },
+      {
+         name: 'type',
+         treatedAs: 'string',
+         description: ""
+      },
+      {
+         name: 'action',
+         treatedAs: 'string',
+         description: ""
+      }
+   ]
 }
 
 /**
@@ -66,7 +84,7 @@ describe('Test command argument parsing and validation', () => {
    });
 
    it('Should pass all validation rules', () => {
-      const parsed = parseArgsArrayToObject(args);
+      const parsed = parseArgsArrayToObject(args, validationOptions);
       validateArguments(parsed, validationOptions);
    });
 
@@ -89,7 +107,7 @@ describe('Test command argument parsing and validation', () => {
 
    it('Should test to many arguments', () => {
       const argsMax = [...args, 'max=plus']
-      const parsed = parseArgsArrayToObject(argsMax);
+      const parsed = parseArgsArrayToObject(argsMax, validationOptions);
 
       checkMaxArguments(Object.keys(parsed).length, validationOptions.maxArgs, validationOptions.name);
 
@@ -98,7 +116,7 @@ describe('Test command argument parsing and validation', () => {
    });
 
    it('Should test to few arguments', () => {
-      const parsed = {...parseArgsArrayToObject(args)};
+      const parsed = {...parseArgsArrayToObject(args, validationOptions)};
       const argLen = Object.keys(parsed).slice(2).length
       checkMinArguments(argLen, validationOptions.minArgs, validationOptions.name);
 
@@ -107,7 +125,7 @@ describe('Test command argument parsing and validation', () => {
    });
 
    it('Should test illegal arguments', () => {
-      const parsed = {...parseArgsArrayToObject(args)};
+      const parsed = {...parseArgsArrayToObject(args, validationOptions)};
       parsed.newKey = parsed.name; // swap value of name to newKey
       delete parsed.name; // remove old valid property
 
@@ -121,7 +139,7 @@ describe('Test command argument parsing and validation', () => {
    });
 
    it('Should test missing arguments', () => {
-      const parsed = {...parseArgsArrayToObject(args)};
+      const parsed = {...parseArgsArrayToObject(args, validationOptions)};
       delete parsed.name; // remove a required argument
 
       const received = Object.keys(parsed);

@@ -8,11 +8,12 @@
   "types": "dist/types.d.ts",
   "scripts": {
     "build": "tsc",
-    "cleanup": "npm run rm-build && npm run rm-coverage && npm run rm-routes && npm run rm-clapi",
+    "cleanup": "npm run rm-build && npm run rm-coverage && npm run rm-routes && npm run rm-server && npm run rm-clapi",
     "rm-build": "rm -rf dist",
     "rm-coverage": "rm -rf coverage",
     "rm-routes": "rm -rf src/routes",
     "rm-clapi": "npm uninstall clapi-bb",
+    "rm-server": "rm -rf src/server",
     "prepare": "npm run cleanup && npm run build",
     "test": "npx jest --runInBand --detectOpenHandles --coverage",
     "clapi": "node dist/src/clapi-bb.js"

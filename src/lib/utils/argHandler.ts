@@ -5,11 +5,11 @@ import {TreatArgAs} from "../types/ValidatorOptions";
 /**
  * Gets the user input arguments.
  * @param {ValidatorOptions} validatorOptions
- * @returns {ParsedArgs} The user input arguments as an object
+ * @returns {ParsedArgs<any>} The user input arguments as an object
  */
-function getArgs (validatorOptions: ValidatorOptions): ParsedArgs {
+function getArgs (validatorOptions: ValidatorOptions): ParsedArgs<any> {
     const raw: string[] = getSlicedRawArgs();
-    const args: ParsedArgs = parseArgsArrayToObject(raw, validatorOptions);
+    const args: ParsedArgs<any> = parseArgsArrayToObject(raw, validatorOptions);
 
     validateArguments(args, validatorOptions);
 
@@ -44,10 +44,10 @@ function validateNpmLifeCycleAndReturnLifeCycleString (): string {
  * Parse array of args to an object.
  * @param {string[]} args
  * @param {ValidatorOptions} validator
- * @return {ParsedArgs}
+ * @return {ParsedArgs<any>}
  */
-function parseArgsArrayToObject (args: string[], validator: ValidatorOptions): ParsedArgs {
-    const options: ParsedArgs = {};
+function parseArgsArrayToObject (args: string[], validator: ValidatorOptions): ParsedArgs<any> {
+    const options: ParsedArgs<any> = {};
 
     args.forEach(arg => {
         const [key, value] = arg.split('=');
@@ -89,10 +89,10 @@ function parseArgumentValue (value: string, treatedAs: TreatArgAs): ParsedArgVal
 
 /**
  * Validates the given arguments for the command or log an error and exit the process
- * @param {ParsedArgs} args
+ * @param {ParsedArgs<any>} args
  * @param {ValidatorOptions} options
  */
-function validateArguments(args: ParsedArgs, options: ValidatorOptions): void {
+function validateArguments(args: ParsedArgs<any>, options: ValidatorOptions): void {
     const {
         maxArgs,
         minArgs,

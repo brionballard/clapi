@@ -20,7 +20,7 @@ const argDetails = [nameType, includeTypes, pathDetails];
 const RouteValidator = {
     maxArgs: 3,
     minArgs: 1,
-    name: 'route',
+    name: 'Create Route',
     available: ['name', 'path', 'includeTypes'],
     required: ['name'],
     argDetails,

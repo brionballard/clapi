@@ -2,9 +2,9 @@ import { type ParsedArgs, type ValidatorOptions } from "../types";
 /**
  * Gets the user input arguments.
  * @param {ValidatorOptions} validatorOptions
- * @returns {ParsedArgs} The user input arguments as an object
+ * @returns {ParsedArgs<any>} The user input arguments as an object
  */
-declare function getArgs(validatorOptions: ValidatorOptions): ParsedArgs;
+declare function getArgs(validatorOptions: ValidatorOptions): ParsedArgs<any>;
 /**
  * Get the raw arguments without the first two items
  * @return {string[]}
@@ -20,15 +20,15 @@ declare function validateNpmLifeCycleAndReturnLifeCycleString(): string;
  * Parse array of args to an object.
  * @param {string[]} args
  * @param {ValidatorOptions} validator
- * @return {ParsedArgs}
+ * @return {ParsedArgs<any>}
  */
-declare function parseArgsArrayToObject(args: string[], validator: ValidatorOptions): ParsedArgs;
+declare function parseArgsArrayToObject(args: string[], validator: ValidatorOptions): ParsedArgs<any>;
 /**
  * Validates the given arguments for the command or log an error and exit the process
- * @param {ParsedArgs} args
+ * @param {ParsedArgs<any>} args
  * @param {ValidatorOptions} options
  */
-declare function validateArguments(args: ParsedArgs, options: ValidatorOptions): void;
+declare function validateArguments(args: ParsedArgs<any>, options: ValidatorOptions): void;
 /**
  * Checks if the number of received arguments exceeds the maximum allowed.
  * If so, logs an error message and exits the process.

@@ -3,11 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.requiredOptionsMessage = exports.argumentDetailDescription = exports.availableOptionsMessage = exports.askForOptionMessage = exports.availableCommandsMessage = exports.askUserToConfirmSelectionContent = exports.askUserToSelectCommandContent = exports.searchForValidatorByConvention = exports.handleArgsAndExecute = exports.askForArg = exports.displayAvailableArgumentsAndDetails = exports.confirmSelection = exports.askUserToSelectCommand = exports.formatAndDisplayCommandSelections = exports.loadCommandValidators = exports.loadCommands = void 0;
+exports.requiredOptionsMessage = exports.argumentDetailDescription = exports.availableOptionsMessage = exports.askForOptionMessage = exports.availableCommandsMessage = exports.askUserToConfirmSelectionContent = exports.askUserToSelectCommandContent = exports.askForName = exports.renameFileAndTryAgain = exports.handleDuplicateFileConflict = exports.searchForValidatorByConvention = exports.handleArgsAndExecute = exports.askForArg = exports.displayAvailableArgumentsAndDetails = exports.confirmSelection = exports.askUserToSelectCommand = exports.formatAndDisplayCommandSelections = exports.loadCommandValidators = exports.loadCommands = void 0;
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const logger_1 = require("./logger");
 const argHandler_1 = require("./argHandler");
+const defaults_1 = require("./defaults");
 const validatorNamePattern = '{filename}Validator';
 // If the string explicitly contains the color code, it is used in the readline.Interface as a message.
 const askUserToSelectCommandContent = `${logger_1.LoggerColors.FgYellow}1. Enter the number of a command: ${logger_1.LoggerColors.Reset} `;
@@ -85,7 +86,7 @@ function loadCommandValidators(validatorDirPath, commands, ext) {
             else {
                 const indexOfCommand = commands.indexOf(command);
                 commands.splice(indexOfCommand, 1);
-                loadCommandValidators(validatorDirPath, commands);
+                // loadCommandValidators(validatorDirPath, commands);
             }
         });
         return commands;
@@ -116,13 +117,14 @@ function searchForValidatorByConvention(options) {
 }
 exports.searchForValidatorByConvention = searchForValidatorByConvention;
 /**
- * Format command names as display options and render in terminal
+ * Format command names(from validator) as display options and render in terminal
  * @param {Command[]} commands
  */
 function formatAndDisplayCommandSelections(commands) {
-    const displayedOptions = commands.map((command, index) => `[${index}] ${command.name}`);
+    const displayedOptions = commands.map((command, index) => `[${index}] ${command.validator.name}`);
     (0, logger_1.logGood)(availableCommandsMessage);
     displayedOptions.forEach((option) => (0, logger_1.logCustom)(logger_1.LoggerColors.FgCyan, option));
+    console.log("\n");
 }
 exports.formatAndDisplayCommandSelections = formatAndDisplayCommandSelections;
 /**
@@ -237,7 +239,9 @@ exports.askForArg = askForArg;
  */
 function handleArgsAndExecute(command, rl) {
     process.env.npm_lifecycle_event = `clapi:${command.validator.name}`;
-    executeCommand(command, (0, argHandler_1.getArgs)(command.validator), rl);
+    const args = (0, argHandler_1.getArgs)(command.validator); // parse args
+    const processed = (0, defaults_1.loadConfigAndSetArgs)(args); // include ClapiMeta data
+    executeCommand(command, processed, rl);
 }
 exports.handleArgsAndExecute = handleArgsAndExecute;
 /**
@@ -249,3 +253,71 @@ exports.handleArgsAndExecute = handleArgsAndExecute;
 function executeCommand(command, args, rl) {
     command.func(args, rl);
 }
+/**
+ * Handle the case when a file with the same name already exists.
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {string} filePath - Path to the existing file.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @return {Promise<void>}
+ */
+function handleDuplicateFileConflict(args, filePath, rl) {
+    return new Promise((resolve, reject) => {
+        rl.question(`${logger_1.LoggerColors.FgRed}The file ${filePath} already exists. Would you like to overwrite it? [Y/N] ${logger_1.LoggerColors.Reset}`, (ans) => {
+            if (ans.toLowerCase() === 'y') {
+                resolve(args);
+            }
+            else {
+                renameFileAndTryAgain(args, rl).then((newArgs) => resolve(newArgs)).catch(reject);
+            }
+        });
+    });
+}
+exports.handleDuplicateFileConflict = handleDuplicateFileConflict;
+/**
+ * Prompt user to rename the file and try again.
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @returns {Promise<void>}
+ */
+function renameFileAndTryAgain(args, rl) {
+    return new Promise((resolve, reject) => {
+        rl.question('Would you like to rename the file you are currently generating? [Y/N] ', (ans) => {
+            if (ans.toLowerCase() === 'y') {
+                askForName(args, rl).then((modifiedArgs) => resolve(modifiedArgs)).catch(reject);
+            }
+            else {
+                (0, logger_1.logError)('Closing due to naming conflict.');
+                rl.close();
+                reject();
+            }
+        });
+    });
+}
+exports.renameFileAndTryAgain = renameFileAndTryAgain;
+/**
+ * Ask for name of file when renaming
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @return {Promise<void>}
+ */
+function askForName(args, rl) {
+    return new Promise((resolve, reject) => {
+        rl.question('Please enter a new file name: ', (ans) => {
+            if (ans === args.name) {
+                (0, logger_1.logError)('Cannot be the same name.');
+                askForName(args, rl).then(resolve).catch(reject);
+            }
+            else {
+                if (ans !== '') {
+                    args.name = ans;
+                    resolve(args);
+                }
+                else {
+                    (0, logger_1.logError)('Please enter a valid string.\n');
+                    askForName(args, rl).then(resolve).catch(reject);
+                }
+            }
+        });
+    });
+}
+exports.askForName = askForName;

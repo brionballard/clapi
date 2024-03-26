@@ -1,1 +1,3 @@
-export type ParsedArgs = Record<string, any>;
+export type ParsedArgs<T> = {
+    [key: string]: any;
+};

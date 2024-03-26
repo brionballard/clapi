@@ -1,9 +1,10 @@
 import {ArgDetail, Command, ParsedArgs, ValidatorOptions} from "../types";
-import {existsSync, readdirSync} from "fs";
+import {existsSync, readdirSync, writeFileSync} from "fs";
 import path from "path";
 import {ErrorMsgs, logCustom, logError, LoggerColors, logGood, logWarn} from "./logger";
 import * as readline from "readline";
 import {getArgs} from "./argHandler";
+import {ClapiMeta, loadConfigAndSetArgs} from "./defaults";
 
 const validatorNamePattern: string = '{filename}Validator';
 
@@ -80,7 +81,7 @@ function loadCommandValidators (validatorDirPath: string, commands: Command[], e
             } else {
                 const indexOfCommand: number = commands.indexOf(command);
                 commands.splice(indexOfCommand, 1);
-                loadCommandValidators(validatorDirPath, commands);
+                // loadCommandValidators(validatorDirPath, commands);
             }
         });
 
@@ -112,13 +113,14 @@ function searchForValidatorByConvention (options: ValidatorSearchOptions): Valid
 }
 
 /**
- * Format command names as display options and render in terminal
+ * Format command names(from validator) as display options and render in terminal
  * @param {Command[]} commands
  */
 function formatAndDisplayCommandSelections (commands: Command[]): void {
-    const displayedOptions = commands.map((command, index) => `[${index}] ${command.name}`);
+    const displayedOptions = commands.map((command, index) => `[${index}] ${command.validator.name}`);
     logGood(availableCommandsMessage);
     displayedOptions.forEach((option: string) => logCustom(LoggerColors.FgCyan, option))
+    console.log("\n")
 }
 
 /**
@@ -241,7 +243,10 @@ function askForArg (command: Command, rl: readline.Interface, option?: string, o
  */
 function handleArgsAndExecute (command: Command, rl: readline.Interface): void {
     process.env.npm_lifecycle_event = `clapi:${command.validator.name}`;
-    executeCommand(command, getArgs(command.validator), rl);
+    const args: ParsedArgs<any> = getArgs(command.validator); // parse args
+    const processed: ParsedArgs<ClapiMeta> = loadConfigAndSetArgs(args); // include ClapiMeta data
+
+    executeCommand(command, processed, rl);
 }
 
 /**
@@ -250,8 +255,72 @@ function handleArgsAndExecute (command: Command, rl: readline.Interface): void {
  * @param {ParsedArgs} args
  * @param {readline.Interface} rl
  */
-function executeCommand(command: Command, args: ParsedArgs, rl: readline.Interface): void {
+function executeCommand(command: Command, args: ParsedArgs<ClapiMeta>, rl: readline.Interface): void {
     command.func(args, rl);
+}
+
+/**
+ * Handle the case when a file with the same name already exists.
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {string} filePath - Path to the existing file.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @return {Promise<void>}
+ */
+function handleDuplicateFileConflict(args: ParsedArgs<any>, filePath: string, rl: readline.Interface): Promise<ParsedArgs<any>> {
+    return new Promise<ParsedArgs<any>>((resolve, reject) => {
+        rl.question(`${LoggerColors.FgRed}The file ${filePath} already exists. Would you like to overwrite it? [Y/N] ${LoggerColors.Reset}`, (ans: string) => {
+            if (ans.toLowerCase() === 'y') {
+                resolve(args);
+            } else {
+                renameFileAndTryAgain(args, rl).then((newArgs: ParsedArgs<any>) => resolve(newArgs)).catch(reject);
+            }
+        })
+    });
+}
+
+/**
+ * Prompt user to rename the file and try again.
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @returns {Promise<void>}
+ */
+function renameFileAndTryAgain(args: ParsedArgs<any>, rl: readline.Interface): Promise<ParsedArgs<any>> {
+    return new Promise<ParsedArgs<any>>((resolve, reject) => {
+        rl.question('Would you like to rename the file you are currently generating? [Y/N] ', (ans: string) => {
+            if (ans.toLowerCase() === 'y') {
+                askForName(args, rl).then((modifiedArgs: ParsedArgs<any>) => resolve(modifiedArgs)).catch(reject);
+            } else {
+                logError('Closing due to naming conflict.');
+                rl.close();
+                reject();
+            }
+        });
+    });
+}
+
+/**
+ * Ask for name of file when renaming
+ * @param {ParsedArgs<any>} args - Parsed arguments.
+ * @param {readline.Interface} rl - Readline interface for user input.
+ * @return {Promise<void>}
+ */
+function askForName (args: ParsedArgs<any>, rl: readline.Interface): Promise<ParsedArgs<any>> {
+    return new Promise<ParsedArgs<any>>((resolve, reject) => {
+        rl.question('Please enter a new file name: ', (ans: string) => {
+            if (ans === args.name) {
+                logError('Cannot be the same name.');
+                askForName(args, rl).then(resolve).catch(reject);
+            } else {
+                if (ans !== '') {
+                    args.name = ans;
+                    resolve(args);
+                } else {
+                    logError('Please enter a valid string.\n');
+                    askForName(args, rl).then(resolve).catch(reject);
+                }
+            }
+        });
+    })
 }
 
 export {
@@ -264,7 +333,9 @@ export {
     askForArg,
     handleArgsAndExecute,
     searchForValidatorByConvention,
-
+    handleDuplicateFileConflict,
+    renameFileAndTryAgain,
+    askForName,
     // Messages
     askUserToSelectCommandContent,
     askUserToConfirmSelectionContent,
