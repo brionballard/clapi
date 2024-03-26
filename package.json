@@ -13,7 +13,7 @@
     "rm-coverage": "rm -rf coverage",
     "rm-routes": "rm -rf src/routes",
     "rm-clapi": "npm uninstall clapi-bb",
-    "rm-server": "rm -rf src/server",
+    "rm-server": "rm -rf src/servers",
     "prepare": "npm run cleanup && npm run build",
     "test": "npx jest --runInBand --detectOpenHandles --coverage",
     "clapi": "node dist/src/clapi-bb.js"

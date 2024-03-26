@@ -23,7 +23,9 @@ const GenerateRouteFile = (args, rl) => {
     const filePath = path_1.default.join(dir, fileName);
     if ((0, fileUtils_1.checkIfExists)(filePath)) {
         (0, clapiFlowControl_1.handleDuplicateFileConflict)(args, filePath, rl).then((modifiedArgs) => {
-            (0, fileUtils_1.createFile)(filePath, contents, rl);
+            const newName = `${modifiedArgs.name}.${args.lang}`;
+            const newPath = path_1.default.join(dir, newName);
+            (0, fileUtils_1.createFile)(newPath, contents, rl);
         });
     }
     else {

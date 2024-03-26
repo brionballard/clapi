@@ -83,11 +83,11 @@ describe('Test route command execution', () => {
     });
 
     afterAll(() => {
-        // rm(defaultRouteDir,{ recursive: true, force: true }, err => {
-        //     if (err) {
-        //         throw err;
-        //     }
-        // });
+        rm(defaultRouteDir,{ recursive: true, force: true }, err => {
+            if (err) {
+                throw err;
+            }
+        });
     });
 
     it('Should get directory of path', () => {

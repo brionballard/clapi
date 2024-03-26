@@ -267,7 +267,7 @@ function handleDuplicateFileConflict(args, filePath, rl) {
                 resolve(args);
             }
             else {
-                renameFileAndTryAgain(args, rl).then((newArgs) => resolve(newArgs)).catch(reject);
+                renameFileAndTryAgain(args, rl).then((modifiedArgs) => resolve(modifiedArgs)).catch(reject);
             }
         });
     });
@@ -305,12 +305,12 @@ function askForName(args, rl) {
         rl.question('Please enter a new file name: ', (ans) => {
             if (ans === args.name) {
                 (0, logger_1.logError)('Cannot be the same name.');
-                askForName(args, rl).then(resolve).catch(reject);
+                askForName(args, rl).then((modifiedArgs) => resolve(modifiedArgs)).catch(reject);
             }
             else {
                 if (ans !== '') {
-                    args.name = ans;
-                    resolve(args);
+                    const modifiedArgs = { ...args, name: ans };
+                    resolve(modifiedArgs);
                 }
                 else {
                     (0, logger_1.logError)('Please enter a valid string.\n');

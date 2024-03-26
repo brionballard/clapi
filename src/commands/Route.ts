@@ -24,7 +24,9 @@ const GenerateRouteFile: ExecutableCommand = (args: ParsedArgs<RouteValidatorArg
 
     if (checkIfExists(filePath)) {
         handleDuplicateFileConflict(args, filePath, rl).then((modifiedArgs: ParsedArgs<RouteValidatorArgs>) => {
-            createFile(filePath, contents, rl);
+            const newName = `${modifiedArgs.name}.${args.lang}`;
+            const newPath = path.join(dir, newName);
+            createFile(newPath, contents, rl);
         });
     } else {
         createFile(filePath, contents, rl);

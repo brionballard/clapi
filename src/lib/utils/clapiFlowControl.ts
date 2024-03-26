@@ -272,7 +272,7 @@ function handleDuplicateFileConflict(args: ParsedArgs<any>, filePath: string, rl
             if (ans.toLowerCase() === 'y') {
                 resolve(args);
             } else {
-                renameFileAndTryAgain(args, rl).then((newArgs: ParsedArgs<any>) => resolve(newArgs)).catch(reject);
+                renameFileAndTryAgain(args, rl).then((modifiedArgs: ParsedArgs<any>) => resolve(modifiedArgs)).catch(reject);
             }
         })
     });
@@ -309,11 +309,11 @@ function askForName (args: ParsedArgs<any>, rl: readline.Interface): Promise<Par
         rl.question('Please enter a new file name: ', (ans: string) => {
             if (ans === args.name) {
                 logError('Cannot be the same name.');
-                askForName(args, rl).then(resolve).catch(reject);
+                askForName(args, rl).then((modifiedArgs: ParsedArgs<any>) => resolve(modifiedArgs)).catch(reject);
             } else {
                 if (ans !== '') {
-                    args.name = ans;
-                    resolve(args);
+                    const modifiedArgs = {...args, name: ans};
+                    resolve(modifiedArgs);
                 } else {
                     logError('Please enter a valid string.\n');
                     askForName(args, rl).then(resolve).catch(reject);
