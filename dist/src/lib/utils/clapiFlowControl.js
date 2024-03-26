@@ -203,14 +203,13 @@ exports.displayAvailableArgumentsAndDetails = displayAvailableArgumentsAndDetail
  * @param {string[] | undefined} options
  */
 function askForArg(command, rl, option, options) {
-    if (!command.validator)
-        process.exit(1); // TODO: handle this error better
     const required = command.validator.required;
     let newOptions = options ?? [...command.validator.available];
     const currentOption = option ?? newOptions[0];
     const existsInAnswers = (ans) => ans.startsWith(currentOption);
     return new Promise((resolve, reject) => {
         rl.question(askForOptionMessage.replace('{option}', currentOption), (answer) => {
+            // TODO: Ensure that input type can be treated as argDetail treated as. If not log message and ask for value again
             if (answer && answer !== '') {
                 process.argv.push(`${currentOption}=${answer}`);
             }
@@ -237,8 +236,6 @@ exports.askForArg = askForArg;
  * @param {readline.Interface} rl
  */
 function handleArgsAndExecute(command, rl) {
-    if (!command.validator)
-        process.exit(1); // TODO: handle this error better
     process.env.npm_lifecycle_event = `clapi:${command.validator.name}`;
     executeCommand(command, (0, argHandler_1.getArgs)(command.validator), rl);
 }

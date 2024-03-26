@@ -9,7 +9,7 @@ const logger_1 = require("./logger");
  */
 function getArgs(validatorOptions) {
     const raw = getSlicedRawArgs();
-    const args = parseArgsArrayToObject(raw);
+    const args = parseArgsArrayToObject(raw, validatorOptions);
     validateArguments(args, validatorOptions);
     return args;
 }
@@ -25,6 +25,7 @@ exports.getSlicedRawArgs = getSlicedRawArgs;
 /**
  * Validate that the current command is valid
  * for the library, if not, exit the process.
+ * @return {string}
  */
 function validateNpmLifeCycleAndReturnLifeCycleString() {
     const npmLifecycleEvent = process.env.npm_lifecycle_event;
@@ -38,17 +39,41 @@ exports.validateNpmLifeCycleAndReturnLifeCycleString = validateNpmLifeCycleAndRe
 /**
  * Parse array of args to an object.
  * @param {string[]} args
+ * @param {ValidatorOptions} validator
  * @return {ParsedArgs}
  */
-function parseArgsArrayToObject(args) {
+function parseArgsArrayToObject(args, validator) {
     const options = {};
     args.forEach(arg => {
         const [key, value] = arg.split('=');
-        options[key] = value;
+        const detail = validator.argDetails.find((detail) => detail.name === key);
+        let formattedValue = value;
+        if (detail) {
+            formattedValue = parseArgumentValue(value, detail.treatedAs);
+        }
+        options[key] = formattedValue;
     });
     return options;
 }
 exports.parseArgsArrayToObject = parseArgsArrayToObject;
+/**
+ * Format argument value based on validator treatedAs value
+ * @param {string} value
+ * @param {TreatArgAs} treatedAs
+ * @return {ParsedArgValue}
+ */
+function parseArgumentValue(value, treatedAs) {
+    switch (treatedAs) {
+        case "number":
+            return parseInt(value);
+        case "boolean":
+            return value === 'true';
+        case "array":
+            return value.split(',');
+    }
+    // should only reach here if it is intended to be a string
+    return value;
+}
 /**
  * Validates the given arguments for the command or log an error and exit the process
  * @param {ParsedArgs} args

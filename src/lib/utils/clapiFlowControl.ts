@@ -206,8 +206,6 @@ function displayAvailableArgumentsAndDetails (command: Command): void {
  * @param {string[] | undefined} options
  */
 function askForArg (command: Command, rl: readline.Interface, option?: string, options?: string[]): Promise<void> {
-    if (!command.validator) process.exit(1); // TODO: handle this error better
-
     const required: string[] = command.validator.required;
     let newOptions: string[] = options ?? [...command.validator.available];
     const currentOption = option ?? newOptions[0];
@@ -216,6 +214,7 @@ function askForArg (command: Command, rl: readline.Interface, option?: string, o
 
     return new Promise<void>((resolve, reject) => {
         rl.question(askForOptionMessage.replace('{option}', currentOption), (answer: string) => {
+            // TODO: Ensure that input type can be treated as argDetail treated as. If not log message and ask for value again
             if (answer && answer !== '') {
                 process.argv.push(`${currentOption}=${answer}`);
             } else {
@@ -241,8 +240,6 @@ function askForArg (command: Command, rl: readline.Interface, option?: string, o
  * @param {readline.Interface} rl
  */
 function handleArgsAndExecute (command: Command, rl: readline.Interface): void {
-    if (!command.validator) process.exit(1); // TODO: handle this error better
-
     process.env.npm_lifecycle_event = `clapi:${command.validator.name}`;
     executeCommand(command, getArgs(command.validator), rl);
 }

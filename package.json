@@ -14,7 +14,8 @@
     "rm-routes": "rm -rf src/routes",
     "rm-clapi": "npm uninstall clapi-bb",
     "prepare": "npm run cleanup && npm run build",
-    "test": "npx jest --runInBand --detectOpenHandles --coverage"
+    "test": "npx jest --runInBand --detectOpenHandles --coverage",
+    "clapi": "node dist/src/clapi-bb.js"
   },
   "author": "Brion Ballard",
   "license": "MIT",

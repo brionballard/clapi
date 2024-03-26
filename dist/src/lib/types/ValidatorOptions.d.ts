@@ -8,10 +8,11 @@ export type ValidatorOptions = {
     minArgs: number;
     name: string;
     required: string[];
-    argDetails?: ArgDetail[];
+    argDetails: ArgDetail[];
 };
 export type ArgDetail = {
     name: string;
     description: string;
-    treatedAs: 'string' | 'boolean' | 'number' | 'array';
+    treatedAs: TreatArgAs;
 };
+export type TreatArgAs = 'string' | 'boolean' | 'number' | 'array';

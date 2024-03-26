@@ -1,5 +1,6 @@
-import {type ParsedArgs, type ValidatorOptions} from "../types";
+import {ArgDetail, type ParsedArgs, type ValidatorOptions} from "../types";
 import {ErrorMsgs, logError} from "./logger";
+import {TreatArgAs} from "../types/ValidatorOptions";
 
 /**
  * Gets the user input arguments.
@@ -8,7 +9,7 @@ import {ErrorMsgs, logError} from "./logger";
  */
 function getArgs (validatorOptions: ValidatorOptions): ParsedArgs {
     const raw: string[] = getSlicedRawArgs();
-    const args: ParsedArgs = parseArgsArrayToObject(raw);
+    const args: ParsedArgs = parseArgsArrayToObject(raw, validatorOptions);
 
     validateArguments(args, validatorOptions);
 
@@ -26,6 +27,7 @@ function getSlicedRawArgs(): string[] {
 /**
  * Validate that the current command is valid
  * for the library, if not, exit the process.
+ * @return {string}
  */
 function validateNpmLifeCycleAndReturnLifeCycleString (): string {
     const npmLifecycleEvent: string | undefined = process.env.npm_lifecycle_event;
@@ -41,17 +43,48 @@ function validateNpmLifeCycleAndReturnLifeCycleString (): string {
 /**
  * Parse array of args to an object.
  * @param {string[]} args
+ * @param {ValidatorOptions} validator
  * @return {ParsedArgs}
  */
-function parseArgsArrayToObject (args: string[]): ParsedArgs {
+function parseArgsArrayToObject (args: string[], validator: ValidatorOptions): ParsedArgs {
     const options: ParsedArgs = {};
 
     args.forEach(arg => {
         const [key, value] = arg.split('=');
-        options[key] = value;
+        const detail: ArgDetail | undefined = validator.argDetails.find((detail: ArgDetail) => detail.name === key);
+        let formattedValue: any = value;
+
+        if (detail) {
+            formattedValue = parseArgumentValue(value, detail.treatedAs)
+        }
+
+        options[key] = formattedValue;
     });
 
     return options;
+}
+
+type ParsedArgValue =  string | number | boolean | any[];
+/**
+ * Format argument value based on validator treatedAs value
+ * @param {string} value
+ * @param {TreatArgAs} treatedAs
+ * @return {ParsedArgValue}
+ */
+function parseArgumentValue (value: string, treatedAs: TreatArgAs): ParsedArgValue {
+    switch (treatedAs) {
+        case "number":
+            return parseInt(value)
+
+        case "boolean":
+            return value === 'true'
+
+        case "array":
+            return value.split(',');
+    }
+
+    // should only reach here if it is intended to be a string
+    return value;
 }
 
 /**

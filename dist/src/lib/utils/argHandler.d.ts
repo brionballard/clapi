@@ -13,14 +13,16 @@ declare function getSlicedRawArgs(): string[];
 /**
  * Validate that the current command is valid
  * for the library, if not, exit the process.
+ * @return {string}
  */
 declare function validateNpmLifeCycleAndReturnLifeCycleString(): string;
 /**
  * Parse array of args to an object.
  * @param {string[]} args
+ * @param {ValidatorOptions} validator
  * @return {ParsedArgs}
  */
-declare function parseArgsArrayToObject(args: string[]): ParsedArgs;
+declare function parseArgsArrayToObject(args: string[], validator: ValidatorOptions): ParsedArgs;
 /**
  * Validates the given arguments for the command or log an error and exit the process
  * @param {ParsedArgs} args
