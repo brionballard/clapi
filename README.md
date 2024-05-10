@@ -1,6 +1,6 @@
 # Clapi
 
-Clapi is a cli app to build the boiler plate code for our standard applications be it whole applications or individual pieces such as servers, routes, or other single components.
+Clapi is a cli app to build the boiler plate code for my standard applications be it whole applications or individual pieces such as servers, routes, or other single components.
 
 Clapi has an opinionated file system that allows for smooth user input and fast automation. There are sets of commands that configured in the terminal by the user. When a user completes their configuration, the code executes and it generates the boiler plate code for whatever component they selected.
 
